@@ -4,31 +4,26 @@
     <style type="text/css">
       html, body, #map-canvas { height: 100%; margin: 0; padding: 0;}
     </style>
-      <script type="text/javascript"
-       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBXRL_RZaG-tgo_DXD2-8TyljfHyHf9Sc4">
-     </script>
-     <script
-      src="https://maps.googleapis.com/maps/api/js?libraries=geometry,visualization">
-    </script>
+      <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBXRL_RZaG-tgo_DXD2-8TyljfHyHf9Sc4"></script>
+     <script src="https://maps.googleapis.com/maps/api/js?libraries=geometry,visualization"></script>
+     <script src="jQuery.js"></script>
+     <script> src = "./jquery.csv-0.71.js"</script>
      <script type="text/javascript">
 
     var Data = [
-      new google.maps.LatLng(41.8336, -71.4112),
-      new google.maps.LatLng(41.8303, -71.4215),
-      new google.maps.LatLng(41.8119, -71.4603),
-      new google.maps.LatLng(41.8234, -71.3688),
-      new google.maps.LatLng(41.8030, -71.4095)
+      {location: new google.maps.LatLng(41.8336, -71.4112), weight: 5},
+      {location: new google.maps.LatLng(41.8303, -71.4215), weight: 1},
+      {location: new google.maps.LatLng(41.8119, -71.4603), weight: 1},
+      {location: new google.maps.LatLng(41.8234, -71.3688), weight: 5},
+      {location: new google.maps.LatLng(41.8030, -71.4095), weight: 1},
+      {location: new google.maps.LatLng(41.8340, -71.4195), weight: 1},
+      {location: new google.maps.LatLng(41.8134, -71.3729), weight: 5}
       ];
-
-    var tweets = document.createElement('tweets');
-    tweets.src = '';
-    document.getElementsByTagName('head')[0].appendChild(tweets);
-
 
       function initialize() {
         var mapOptions = {
-          center: { lat: 41.8271, lng: -71.4100},
-          zoom: 6
+          center: { lat: 39.2465, lng: -98.3782},
+          zoom: 4
         };
         var map = new google.maps.Map(document.getElementById('map-canvas'),
             mapOptions);
@@ -36,46 +31,55 @@
         var pointArray = new google.maps.MVCArray(Data);
         heatmap = new google.maps.visualization.HeatmapLayer({
           data: pointArray,
-          gradient: ['rgba(0, 255, 255, 0)', 'rgb(255, 255, 0)', 'rgb(255, 0, 0)'],//, 'rgb(128, 0, 128)', 'rgb(255, 0, 255)'], 
-          dissipate: false,
-          map: map
-        });
-
-        var pointArray2 = new google.maps.MVCArray(Data2);
-        heatmap2 = new google.maps.visualization.HeatmapLayer({
-          data: pointArray2,
-          gradient: ['rgba(0, 255, 255, 0)', 'rgb(0, 0, 255)'], //'rgb(0, 255, 255)'], 
-          dissipate: false,
+          gradient: ['rgba(0, 255, 255, 0)',  'rgb(255, 255, 0)', 'rgb(255, 0, 0)'],//, 'rgb(128, 0, 128)', 'rgb(255, 0, 255)'], 
           map: map
         });
       }
 
-      function eqfeed_callback(sentiment){
-        var sentimentData = [];
+      function eqfeed_callback(positiveInput, negativeInput){
+        var positiveData = [];
+        var negativeData = [];
         
-        for(var i = 0; i<sentimentlength; i++){
-          var coords = sentiment[i].coordinates;
-          var latLng = new google.maps.LatLng(coords[1], coords[0]);
-          var score = sentiment[i].score;
+        var positive = $.csv.toArrays(positiveInput);
+        var negative = $.csv.toArrays(negativeInput);
+        for(var i = 0; i<positive.length; i++){
+          var latLng = new google.maps.LatLng(positive[i][1], positive[i][2]);
+          var score = positive[i][0];
           var weightedLoc = {
             location: latLng,
             weight: score
           };
-          sentimentData.push(weightedLoc);
+          positiveData.push(weightedLoc);
         };
 
-        sentimentMap = new google.maps.visualization.HeatmapLayer({
-          data: sentimentData,
+        for(var i = 0; i<negative.length; i++){
+          var latLng = new google.maps.LatLng(positive[i][1], positive[i][2]);
+          var score = negative[i][0];
+          var weightedLoc = {
+            location: latLng,
+            weight: score
+          };
+          negativeData.push(weightedLoc);
+        };
+
+        positiveMap = new google.maps.visualization.HeatmapLayer({
+          data: positiveData,
           dissipating: false,
-          gradient: ['rgba(0, 0, 0, 0', 'rgb(0, 0, 255)'],
+          gradient: ['rgba(0, 0, 0, 0', 'rgb(255, 255, 0)', 'rgb(255, 199, 10', 'rgb(255, 125, 10)', 'rgb(255, 0, 0)'],
           map: map
         });
-
+        negativeMap = new google.maps.visualization.HeatmapLayer({
+          data: negativeData,
+          dissipating: false,
+          gradient: ['rgba(0, 0, 0, 0', 'rgb(1, 255, 248)', 'rgb(10, 98, 250)', 'rgb(7, 0, 201)','rgb(0, 0, 255)'],
+          map: map
+        });
       }
+
       google.maps.event.addDomListener(window, 'load', initialize);
     </script>
   </head>
   <body>
-<div id="map-canvas"></div>
+    <div id="map-canvas"></div>
   </body>
 </html>
