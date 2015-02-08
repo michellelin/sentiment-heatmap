@@ -27,4 +27,9 @@ public class ScoredLocation {
 	public double getLng() {
 		return this.loc.getLng();
 	}
+
+	@Override
+	public String toString() {
+		return this.score + "," + this.getLng + "," + this.getLat + "\n";
+	}
 }
