@@ -28,11 +28,11 @@ import twitter4j.conf.ConfigurationBuilder;
 public class Main {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		String oAuthConsumerKey = "zJUtvGJkQe4nKNsdI6nyytCZ7";
-	    String oAuthConsumerSecret = "fbQtnsXUsgYdk2HiSA3KJpSHIwZ0YKLgsiblk9b8dH1fPhPe97";
+		String oAuthConsumerKey = "";
+	    String oAuthConsumerSecret = "";
 
-	    String oAuthAccessToken = "2281706174-B4I05DRdLTXoDoHUOzuRgFDavfZeY07fgXuJ64e";
-	    String oAuthAccessTokenSecret = "Pml9w8U1ysADSUeIZDuye4dVkT9DbRLYXtNlXVJGpZ0ht";
+	    String oAuthAccessToken = "";
+	    String oAuthAccessTokenSecret = "";
 	    
 	    ConfigurationBuilder cb = new ConfigurationBuilder();
 	    cb.setDebugEnabled(true)
