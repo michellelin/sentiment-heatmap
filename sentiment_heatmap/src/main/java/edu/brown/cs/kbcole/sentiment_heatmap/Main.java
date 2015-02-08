@@ -1,6 +1,11 @@
 package edu.brown.cs.kbcole.sentiment_heatmap;
 
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -63,34 +68,53 @@ public class Main {
     	}
     	
 	    
-		Spark.setPort(4571);
+		Spark.setPort(4572);
 		runSparkServer(posBuilder.toString(), negBuilder.toString());
 	}
 	
 	public static void populateLists(Twitter twitter, List<ScoredLocation> positives, List<ScoredLocation> negatives) {
-		List<Status> tweets = new ArrayList<>();
-    	Query query = new Query();
-    	query.resultType(ResultType.recent);
-    	query.setCount(100);
-    	query.setGeoCode(new GeoLocation(37.781157, -122.398720), 30, Query.Unit.valueOf("mi"));
-    	try {
-			tweets = twitter.search(query).getTweets();
-			System.out.println(tweets.size());
-	    	for(Status tweet : tweets) {
-				double score = Idol.getScore(tweet.getText());
-				ScoredLocation scoredLocation = new ScoredLocation(score, tweet.getGeoLocation());
-				if(score > 0) {
-					positives.add(scoredLocation);
-				}
-				else if(score < 0) {
-					negatives.add(scoredLocation);
-				}
+		Cities cities = new Cities();
+		for(String city : cities.getCities()) {
+			List<Status> tweets = new ArrayList<>();
+	    	Query query = new Query();
+	    	//query.resultType(ResultType.recent);
+	    	query.setCount(100);
+	    	GeoLocation location = cities.getCityCoords().get(city);
+	    	if(location == null) {
+	    		continue;
 	    	}
-    	} catch (Exception e) {
-			e.printStackTrace();
+	    	query.setGeoCode(location, 30, Query.Unit.valueOf("mi"));
+	    	try {
+				tweets = twitter.search(query).getTweets();
+				System.out.println(tweets.size());
+		    	for(Status tweet : tweets) {
+					double score = Idol.getScore(tweet.getText());
+					ScoredLocation scoredLocation = new ScoredLocation(score, tweet.getGeoLocation());
+					if(score > 0) {
+						positives.add(scoredLocation);
+					}
+					else if(score < 0) {
+						negatives.add(scoredLocation);
+					}
+		    	}
+	    	} catch (Exception e) {
+				e.printStackTrace();
+			}
+	    	
+//	    	Writer writer = null;
+//
+//	    	try {
+//	    	    writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("positives.txt"), "utf-8"));
+//	    	    for(ScoredLocation loc: positives) {
+//	    	    	
+//	    	    }
+//	    	    writer.write();
+//	    	} catch (IOException ex) {
+//	    	  // report
+//	    	} finally {
+//	    	   try {writer.close();} catch (Exception ex) {}
+//	    	}
 		}
-    	
-    	
 	}
 
 	private static void runSparkServer(String posString, String negString) {
