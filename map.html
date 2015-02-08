@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style type="text/css">
+      html, body, #map-canvas { height: 100%; margin: 0; padding: 0;}
+    </style>
+      <script type="text/javascript"
+       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBXRL_RZaG-tgo_DXD2-8TyljfHyHf9Sc4">
+     </script>
+     <script
+      src="https://maps.googleapis.com/maps/api/js?libraries=geometry,visualization">
+    </script>
+     <script type="text/javascript">
+
+    var Data = [
+      new google.maps.LatLng(41.8336, -71.4112),
+      new google.maps.LatLng(41.8303, -71.4215),
+      new google.maps.LatLng(41.8119, -71.4603),
+      new google.maps.LatLng(41.8234, -71.3688),
+      new google.maps.LatLng(41.8030, -71.4095)
+      ];
+
+      var Data2 = [
+      new google.maps.LatLng(42.3348, -72.5213),
+      new google.maps.LatLng(42.2667, -72.8151),
+      new google.maps.LatLng(42.1630, -72.6874),
+      new google.maps.LatLng(42.2464, -72.2954),
+      new google.maps.LatLng(41.8020, -71.4395)
+      ];
+
+    var positive = document.createElement('positive');
+    positive.src = '';
+    document.getElementsByTagName('head')[0].appendChild(positive);
+
+    var negative = document.createElement('negative');
+    negative.src = '';
+    document.getElementsByTagName('head')[0].appendChild(negative);
+
+
+      function initialize() {
+        var mapOptions = {
+          center: { lat: 41.8271, lng: -71.4100},
+          zoom: 6
+        };
+        var map = new google.maps.Map(document.getElementById('map-canvas'),
+            mapOptions);
+
+        var pointArray = new google.maps.MVCArray(Data);
+        heatmap = new google.maps.visualization.HeatmapLayer({
+          data: pointArray,
+          gradient: ['rgba(0, 255, 255, 0)', 'rgb(255, 0, 0)'],//, 'rgb(128, 0, 128)', 'rgb(255, 0, 255)'], 
+          dissipate: false,
+          map: map
+        });
+
+        var pointArray2 = new google.maps.MVCArray(Data2);
+        heatmap2 = new google.maps.visualization.HeatmapLayer({
+          data: pointArray2,
+          gradient: ['rgba(0, 255, 255, 0)', 'rgb(0, 0, 255)'], //'rgb(0, 255, 255)'], 
+          dissipate: false,
+          map: map
+        });
+      }
+
+      function eqfeed_callback(positive, negative){
+        var positiveData = [];
+        var negativeData = [];
+        
+        for(var i = 0; i<positive.features.length; i++){
+          var coords = positive.features[i].geometry.coordinates;
+          var latLng = new google.maps.LatLng(coords[1], coords[0]);
+          positiveData.push(latLng);
+        };
+
+        for(var i = 0; i<negative.features.length; i++){
+          var coords = negative.features[i].geometry.coordinates;
+          var latLng = new google.maps.LatLng(coords[1], coords[0]);
+          negativeData.push(latLng);
+        };
+
+        positiveMap = new google.maps.visualization.HeatmapLayer({
+          data: positiveData,
+          dissipating: false,
+          gradient: ['rgba(0, 0, 0, 0', 'rgb(255, 0, 0)'],
+          map: map
+        });
+
+        negativeMap = new google.maps.visualization.HeatmapLayer({
+          data: negativeData,
+          dissipating: false,
+          gradient: ['rgba(0, 0, 0, 0', 'rgb(0, 0, 255)'],
+          map: map
+        });
+
+      }
+      google.maps.event.addDomListener(window, 'load', initialize);
+    </script>
+  </head>
+  <body>
+<div id="map-canvas"></div>
+  </body>
+</html>
