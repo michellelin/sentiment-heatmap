@@ -31,7 +31,6 @@ import twitter4j.conf.ConfigurationBuilder;
 public class Main {
 	
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 		String oAuthConsumerKey = "zJUtvGJkQe4nKNsdI6nyytCZ7";
 	    String oAuthConsumerSecret = "fbQtnsXUsgYdk2HiSA3KJpSHIwZ0YKLgsiblk9b8dH1fPhPe97";
 
@@ -70,20 +69,14 @@ public class Main {
 	
 	public static void populateLists(Twitter twitter, List<ScoredLocation> positives, List<ScoredLocation> negatives) {
 		List<Status> tweets = new ArrayList<>();
-    	Query query = new Query("cat");
+    	Query query = new Query();
     	query.resultType(ResultType.recent);
-    	query.setCount(50);
+    	query.setCount(100);
     	query.setGeoCode(new GeoLocation(37.781157, -122.398720), 30, Query.Unit.valueOf("mi"));
     	try {
 			tweets = twitter.search(query).getTweets();
 			System.out.println(tweets.size());
-		} catch (TwitterException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-    	
-    	for(Status tweet : tweets) {
-    		try {
+	    	for(Status tweet : tweets) {
 				double score = Idol.getScore(tweet.getText());
 				ScoredLocation scoredLocation = new ScoredLocation(score, tweet.getGeoLocation());
 				if(score > 0) {
@@ -92,12 +85,10 @@ public class Main {
 				else if(score < 0) {
 					negatives.add(scoredLocation);
 				}
-				
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-    	}
+	    	}
+    	} catch (Exception e) {
+			e.printStackTrace();
+		}
     	
     	
 	}
