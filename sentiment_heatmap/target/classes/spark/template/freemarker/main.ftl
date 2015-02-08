@@ -15,7 +15,9 @@
   
   <body>
   	<h1>Sentiment Heatmap</h1>
-  	<p>${tweets}</p>
+  	
+  	<p id="positives"><pre>${positives}</pre></p>
+  	<p id="negatives"><pre>${negatives}</pre></p>
   	
   
   </body>
